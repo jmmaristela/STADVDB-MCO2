@@ -1,0 +1,91 @@
+.header {
+    background-color: gray;
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+    padding: 20px;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.status-container {
+    margin-top: 120px;
+}
+
+.button-container {
+    position: absolute;
+    left: 49%;
+    transform: translateX(-50%);
+    margin-top: 140px;
+    z-index: 1001;
+}
+
+.button-container button {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 0 10px;
+    border-radius: 15px;
+}
+
+#showAppointmentsBtn {
+    /* Add your styles here */
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    /* Example background color */
+    color: #fff;
+    /* Example text color */
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#showAppointmentsBtn:hover {
+    /* Add styles for hover state */
+    background-color: #0056b3;
+    /* Example background color */
+}
+
+#editAppointmentsBtn {
+    /* Add your styles here */
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    /* Example background color */
+    color: #fff;
+    /* Example text color */
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#editAppointmentsBtn:hover {
+    /* Add styles for hover state */
+    background-color: #0056b3;
+    /* Example background color */
+}
+
+#createAppointmentsBtn {
+    /* Add your styles here */
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    /* Example background color */
+    color: #fff;
+    /* Example text color */
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#createAppointmentsBtn:hover {
+    /* Add styles for hover state */
+    background-color: #0056b3;
+    /* Example background color */
+}

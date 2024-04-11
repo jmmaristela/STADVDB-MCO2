@@ -1,10 +1,61 @@
+<link rel="stylesheet" href="/static/css/index.css">
+
+
 <div class="header">
     <h1>Transaction Management Application</h1>
 </div>
 
+<div class="status-container">
+    <p>Node 1 Status: <span id="node1Status"></span></p>
+    <p>Node 2 Status: <span id="node2Status"></span></p>
+    <p>Node 3 Status: <span id="node3Status"></span></p>
+</div>
+
 <div class="button-container">
-    <button id="createAppointmentBtn">Create Appointment</button>
-    <button id="editAppointmentBtn">Edit Appointment</button>
-    <button id="showAppointmentsBtn">Show Appointments</button>
+    <a href="/view" id="createAppointmentsBtn">Create Appointment</a>
+    <a href="/view" id="editAppointmentsBtn">Edit Appointments</a>
+    <a href="/view" id="showAppointmentsBtn">View Appointments</a>
 
 </div>
+
+<script>
+    // public/script.js
+    fetch('/connectionStatus')
+        .then(response => response.json())
+        .then(data => {
+            const connectionStatus = data;
+            const node1StatusElement = document.getElementById('node1Status');
+            const node2StatusElement = document.getElementById('node2Status');
+            const node3StatusElement = document.getElementById('node3Status');
+
+            if (connectionStatus.node1) {
+                node1StatusElement.innerText = 'Online';
+                node1StatusElement.classList.add('online');
+                node1StatusElement.classList.remove('offline');
+            } else {
+                node1StatusElement.innerText = 'Offline';
+                node1StatusElement.classList.add('offline');
+                node1StatusElement.classList.remove('online');
+            }
+
+            if (connectionStatus.node2) {
+                node2StatusElement.innerText = 'Online';
+                node2StatusElement.classList.add('online');
+                node2StatusElement.classList.remove('offline');
+            } else {
+                node2StatusElement.innerText = 'Offline';
+                node2StatusElement.classList.add('offline');
+                node2StatusElement.classList.remove('online');
+            }
+
+            if (connectionStatus.node3) {
+                node3StatusElement.innerText = 'Online';
+                node3StatusElement.classList.add('online');
+                node3StatusElement.classList.remove('offline');
+            } else {
+                node3StatusElement.innerText = 'Offline';
+                node3StatusElement.classList.add('offline');
+                node3StatusElement.classList.remove('online');
+            }
+        });
+</script>
