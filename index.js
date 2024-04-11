@@ -1,18 +1,25 @@
-//const express = require('express');
-import express from 'express';// Your application logic here
+// const express = require('express');
+import express from 'express';
+import exphbs from 'express-handlebars';
 const app = express();
-const port = 3000;
+
+app.engine('hbs', exphbs.engine({ extname: '.hbs' }));
+app.set('view engine', 'hbs');
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-//import { Appointments, Node1Appointments } from './DBConn.js';
-//comment out which node you dont need
 import { Node1 } from './dbconnection.js';
 import { Node2 } from './dbconnection.js';
 import { Node3 } from './dbconnection.js';
+
+
+// Routing
+app.get('/', (req, res) => {
+    res.render('index');
+});
 
 async function initializeDB() {
 
@@ -41,29 +48,8 @@ async function initializeDB() {
 
 initializeDB();
 
-// Serve static files from the 'public' directory
-app.use(express.static('public'));
-
-// Route for serving the index.html file
-app.get('/', (req, res) => {
-    res.sendFile('public/html/index.html', { root: __dirname });
+app.listen(3000, () => {
+    console.log('Server is running on port 3000');
 });
 
-// Route for serving the create.html file
-app.get('/create', (req, res) => {
-    res.sendFile('public/html/create.html', { root: __dirname });
-});
-
-// Route for serving the edit.html file
-app.get('/edit', (req, res) => {
-    res.sendFile('public/html/edit.html', { root: __dirname });
-});
-
-// Route for serving the show.html file
-app.get('/show', (req, res) => {
-    res.sendFile('public/html/show.html', { root: __dirname });
-});
-
-app.listen(port, () => {
-    console.log(`Now listening on port ${port}`);
-});
+// module.exports = app;
