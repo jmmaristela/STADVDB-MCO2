@@ -13,6 +13,7 @@
   "dependencies": {
     "datatables.net": "^2.0.3",
     "datatables.net-dt": "^2.0.3",
+    "body-parser": "^1.20.2",
     "express": "^4.19.2",
     "express-handlebars": "^7.1.2",
     "mysql2": "^3.9.4",
@@ -22,3 +23,4 @@
     "nodemon": "^3.1.0"
   }
 }
+

@@ -4,6 +4,7 @@ import exphbs from 'express-handlebars';
 const app = express();
 import routes from './routes/routes.js';
 
+app.use(express.json());
 
 app.engine('hbs', exphbs.engine({ extname: '.hbs' }));
 app.set('view engine', 'hbs');

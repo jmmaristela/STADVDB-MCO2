@@ -1,5 +1,6 @@
 // import 'dotenv/config'
 import { Sequelize } from 'sequelize'
+import { DataTypes } from 'sequelize';
 
 
 //connects to central node
@@ -62,8 +63,19 @@ export const Node1Appointments = Node1.define('appointments', {
     RegionName: { type: Sequelize.STRING, allowNull: true },
     gender: { type: Sequelize.STRING, allowNull: true },
     age: { type: Sequelize.INTEGER, allowNull: true },
-    mainspecialty: { type: Sequelize.STRING, allowNull: true }
+    mainspecialty: { type: Sequelize.STRING, allowNull: true },
+    createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
 }, {
+    timestamps: false, // disable timestamps
     tableName: 'appointments' // Make sure this matches your actual table name
 });
 
@@ -85,8 +97,19 @@ export const Node2Appointments = Node2.define('appointments', {
     RegionName: { type: Sequelize.STRING, allowNull: true },
     gender: { type: Sequelize.STRING, allowNull: true },
     age: { type: Sequelize.INTEGER, allowNull: true },
-    mainspecialty: { type: Sequelize.STRING, allowNull: true }
+    mainspecialty: { type: Sequelize.STRING, allowNull: true },
+    createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
 }, {
+    timestamps: false, // disable timestamps
     tableName: 'appointments' // Make sure this matches your actual table name
 });
 
@@ -108,7 +131,18 @@ export const Node3Appointments = Node3.define('appointments', {
     RegionName: { type: Sequelize.STRING, allowNull: true },
     gender: { type: Sequelize.STRING, allowNull: true },
     age: { type: Sequelize.INTEGER, allowNull: true },
-    mainspecialty: { type: Sequelize.STRING, allowNull: true }
+    mainspecialty: { type: Sequelize.STRING, allowNull: true },
+    createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
 }, {
+    timestamps: false, // disable timestamps
     tableName: 'appointments' // Make sure this matches your actual table name
 });
