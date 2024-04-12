@@ -11,10 +11,16 @@
     z-index: 1000;
 }
 
+.table-container {
+    margin-top: 150px;
+    /* Adjust the margin between header and table */
+    overflow-x: auto;
+    /* Enable horizontal scrolling */
+}
+
 table {
     border-collapse: collapse;
     width: 100%;
-    margin-top: 150px;
 }
 
 th,
