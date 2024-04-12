@@ -1,12 +1,11 @@
 <link rel="stylesheet" href="/static/css/views.css">
 
-
 <div class="header">
     <h1>Transaction Management Application</h1>
 </div>
 
 <div class="table-container">
-    <table>
+    <table id="appointmentsTable" class="display">
         <thead>
             <tr>
                 <th>pxid</th>
@@ -30,14 +29,29 @@
             </tr>
         </thead>
         <tbody>
-            <!-- You can add your data rows here -->
+            {{#each appointments}}
+            <tr>
+                <td>{{pxid}}</td>
+                <td>{{clinicid}}</td>
+                <td>{{doctorid}}</td>
+                <td>{{apptid}}</td>
+                <td>{{status}}</td>
+                <td>{{TimeQueued}}</td>
+                <td>{{QueueDate}}</td>
+                <td>{{StartTime}}</td>
+                <td>{{EndTime}}</td>
+                <td>{{type}}</td>
+                <td>{{isVirtual}}</td>
+                <td>{{hospitalname}}</td>
+                <td>{{City}}</td>
+                <td>{{Province}}</td>
+                <td>{{RegionName}}</td>
+                <td>{{gender}}</td>
+                <td>{{age}}</td>
+                <td>{{mainspecialty}}</td>
+            </tr>
+            {{/each}}
+
         </tbody>
     </table>
 </div>
-
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Include DataTables CSS -->
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
-<!-- Include DataTables JS -->
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>

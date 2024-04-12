@@ -9,10 +9,18 @@ const router = Router();
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
-router.get('/view', (req, res) => {
-    res.render('view');
-});
+router.get('/view', async (req, res) => {
+    try {
+        // Fetch all appointments from Node 1
+        const appointments = await Node1Appointments.findAll({ raw: true });
 
+        // Render the view page and pass the appointments data to the template
+        res.render('view', { appointments });
+    } catch (error) {
+        console.error('Error fetching appointments:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 router.get('/', (req, res) => {
     res.render('index');
 });
@@ -29,9 +37,9 @@ router.get('/update', (req, res) => {
     res.render('update');
 });
 
-router.post('/submit', async(req, res) => {
+router.post('/submit', async (req, res) => {
     console.log('Request body:', req.body);
-   
+
     const { pxid, clinicid, doctorid, apptid, status, TimeQueued, QueueDate, StartTime, EndTime, type, isVirtual, hospitalname,
         City, Province, RegionName, gender, age, mainspecialty } = req.body;
 
@@ -62,13 +70,13 @@ router.post('/submit', async(req, res) => {
             Province: Province,
             gender: gender,
             age: age
-        }, { transaction: node1 },{
+        }, { transaction: node1 }, {
             fields: ['pxid', 'clinicid', 'doctorid', 'apptid', 'status', 'TimeQueued', 'QueueDate', 'StartTime', 'EndTime', 'type', 'isVirtual', 'hospitalname', 'City', 'Province', 'RegionName', 'gender', 'age', 'mainspecialty']
         });
         console.log('Successful', insertNode1);
 
 
-        if(regionsForNode2.includes(req.body.RegionName)){
+        if (regionsForNode2.includes(req.body.RegionName)) {
             const insertNode2 = await Node2Appointments.create({
                 pxid: pxid,
                 clinicid: clinicid,
@@ -88,14 +96,14 @@ router.post('/submit', async(req, res) => {
                 Province: Province,
                 gender: gender,
                 age: age
-            },{ transaction: node2 },{
+            }, { transaction: node2 }, {
                 fields: ['pxid', 'clinicid', 'doctorid', 'apptid', 'status', 'TimeQueued', 'QueueDate', 'StartTime', 'EndTime', 'type', 'isVirtual', 'hospitalname', 'City', 'Province', 'RegionName', 'gender', 'age', 'mainspecialty']
             });
             await node2.commit();
             await node3.commit();
             console.log('Successful', insertNode2);
         }
-        if(regionsForNode3.includes(req.body.RegionName)){
+        if (regionsForNode3.includes(req.body.RegionName)) {
             const insertNode3 = await Node3Appointments.create({
                 pxid: pxid,
                 clinicid: clinicid,
@@ -115,7 +123,7 @@ router.post('/submit', async(req, res) => {
                 Province: Province,
                 gender: gender,
                 age: age
-            },{ transaction: node3 },{
+            }, { transaction: node3 }, {
                 fields: ['pxid', 'clinicid', 'doctorid', 'apptid', 'status', 'TimeQueued', 'QueueDate', 'StartTime', 'EndTime', 'type', 'isVirtual', 'hospitalname', 'City', 'Province', 'RegionName', 'gender', 'age', 'mainspecialty']
             });
             await node3.commit();
@@ -128,7 +136,7 @@ router.post('/submit', async(req, res) => {
         if (regionsForNode3.includes(RegionName)) await node3.commit();
 
         res.sendStatus(200);
-    } catch(err) {
+    } catch (err) {
         if (node1) await node1.rollback();
         if (regionsForNode2.includes(RegionName) && node2) await node2.rollback();
         if (regionsForNode3.includes(RegionName) && node3) await node3.rollback();
@@ -138,13 +146,13 @@ router.post('/submit', async(req, res) => {
     }
 });
 
-router.post('/updateform', async(req, res) => {
+router.post('/updateform', async (req, res) => {
     Object.keys(req.body).forEach(key => {
         req.body[key] = req.body[key] === '' ? null : req.body[key];
     });
 
     const { apptidSearch } = req.body;
-    
+
     if (!apptidSearch) {
         return res.status(400).send("Apptid to update appointment is missing or invalid.");
     }
@@ -179,14 +187,15 @@ router.post('/updateform', async(req, res) => {
             Province: Province,
             gender: gender,
             age: age
-        }, { where: {apptid: apptidSearch},}, 
+        }, { where: { apptid: apptidSearch }, },
             { transaction: node1 },
-            { fields: ['pxid', 'clinicid', 'doctorid', 'apptid', 'status', 'TimeQueued', 'QueueDate', 'StartTime', 'EndTime', 'type', 'isVirtual', 'hospitalname', 'City', 'Province', 'RegionName', 'gender', 'age', 'mainspecialty']
-        });
+            {
+                fields: ['pxid', 'clinicid', 'doctorid', 'apptid', 'status', 'TimeQueued', 'QueueDate', 'StartTime', 'EndTime', 'type', 'isVirtual', 'hospitalname', 'City', 'Province', 'RegionName', 'gender', 'age', 'mainspecialty']
+            });
         await node1.commit();
         console.log('Successful', updateNode1);
-        
-        if(regionsForNode2.includes(req.body.RegionName)){
+
+        if (regionsForNode2.includes(req.body.RegionName)) {
             const updateNode2 = await Node2Appointments.update({
                 pxid: pxid,
                 clinicid: clinicid,
@@ -209,15 +218,17 @@ router.post('/updateform', async(req, res) => {
             }, {
                 where: {
                     apptid: apptidSearch
-                }},
+                }
+            },
                 { transaction: node1 },
-                { fields: ['pxid', 'clinicid', 'doctorid', 'apptid', 'status', 'TimeQueued', 'QueueDate', 'StartTime', 'EndTime', 'type', 'isVirtual', 'hospitalname', 'City', 'Province', 'RegionName', 'gender', 'age', 'mainspecialty']
-        });
+                {
+                    fields: ['pxid', 'clinicid', 'doctorid', 'apptid', 'status', 'TimeQueued', 'QueueDate', 'StartTime', 'EndTime', 'type', 'isVirtual', 'hospitalname', 'City', 'Province', 'RegionName', 'gender', 'age', 'mainspecialty']
+                });
             await node2.commit();
             await node3.commit();
             console.log('Successful', updateNode2);
         }
-        if(regionsForNode3.includes(req.body.RegionName)){
+        if (regionsForNode3.includes(req.body.RegionName)) {
             const updateNode3 = await Node3Appointments.update({
                 pxid: pxid,
                 clinicid: clinicid,
@@ -240,10 +251,12 @@ router.post('/updateform', async(req, res) => {
             }, {
                 where: {
                     apptid: apptidSearch
-                }},
+                }
+            },
                 { transaction: node3 },
-                {fields: ['pxid', 'clinicid', 'doctorid', 'apptid', 'status', 'TimeQueued', 'QueueDate', 'StartTime', 'EndTime', 'type', 'isVirtual', 'hospitalname', 'City', 'Province', 'RegionName', 'gender', 'age', 'mainspecialty']
-            });
+                {
+                    fields: ['pxid', 'clinicid', 'doctorid', 'apptid', 'status', 'TimeQueued', 'QueueDate', 'StartTime', 'EndTime', 'type', 'isVirtual', 'hospitalname', 'City', 'Province', 'RegionName', 'gender', 'age', 'mainspecialty']
+                });
             await node2.commit();
             await node3.commit();
             console.log('Successful', updateNode3);
@@ -253,7 +266,7 @@ router.post('/updateform', async(req, res) => {
         if (regionsForNode3.includes(RegionName)) await node3.commit();
 
         res.sendStatus(200);
-    } catch(err) {
+    } catch (err) {
         if (node1) await node1.rollback();
         if (regionsForNode2.includes(RegionName) && node2) await node2.rollback();
         if (regionsForNode3.includes(RegionName) && node3) await node3.rollback();
