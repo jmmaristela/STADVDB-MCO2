@@ -25,65 +25,25 @@ router.get('/result', (req, res) => {
     res.render('result');
 });
 
-router.post('/submit', async(req, res) => {
-    console.log('insert called');
-    console.log(req.body);
-    console.log('Request body:', req.body);
-   // const {pxid, clinicid, doctorid, apptid, status, TimeQueued, QueueDate, StartTime, EndTime, type, isVirtual, hospitalname, City, Province, RegionName, gender, age, mainspecialty
-   // } = req.body;
-    /*
-    const pxid = request.body.pxid;
-    const clinicid = request.body.clinicid;
-    const doctorid = request.body.doctorid;
-    const apptid = request.body.apptid;
-    const status = request.body.status;
-    const TimeQueued = request.body.TimeQueued;
-    const QueueDate = request.body.QueueDate;
-    const StartTime = request.body.StartTime;
-    const  EndTime = request.body.EndTime;
-    const type = request.body.type;
-    const isVirtual = request.body.isVirtual;
-    const hospitalname = request.body.hospitalname;
-    const City = request.body.City;
-    const Province = request.body.Province;
-    const RegionName = request.body.RegionName;
-    const gender = request.body.gender;
-    const age =  request.body.age;
-    const mainspecialty = request.body.mainspecialty;
-    */
-    //const { pxid, clinicid, doctorid, apptid, status, TimeQueued, QueueDate, StartTime, EndTime, type, isVirtual, hospitalname, City, Province, RegionName, gender, age, mainspecialty } = req.body;
+router.get('/update', (req, res) => {
+    res.render('update');
+});
 
-    const {
-        pxid,
-        clinicid,
-        doctorid,
-        apptid,
-        status,
-        TimeQueued,
-        QueueDate,
-        StartTime,
-        EndTime,
-        type,
-        isVirtual,
-        hospitalname,
-        City,
-        Province,
-        RegionName,
-        gender,
-        age,
-        mainspecialty
-    } = req.body;
+router.post('/submit', async(req, res) => {
+    console.log('Request body:', req.body);
+   
+    const { pxid, clinicid, doctorid, apptid, status, TimeQueued, QueueDate, StartTime, EndTime, type, isVirtual, hospitalname,
+        City, Province, RegionName, gender, age, mainspecialty } = req.body;
+
+    const regionsForNode2 = ['National Capital Region (NCR)', 'Cordillera Administrative Region (CAR)', 'Ilocos Region (I)', 'Cagayan Valley (II)', 'Central Luzon (III)', 'CALABARZON (IV-A)', 'MIMAROPA (IV-B)', 'Bicol Region (V)'];
+    const regionsForNode3 = ['Western Visayas (VI)', 'Central Visayas (VII)', 'Eastern Visayas (VIII)', 'Zamboanga Peninsula (IX)', 'Northern Mindanao (X)', 'Davao Region (XI)', 'SOCCSKSARGEN (Cotabato Region) (XII)', 'Caraga (XIII)', 'Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)'];
 
     const node1 = await Node1.transaction();
     const node2 = await Node2.transaction();
     const node3 = await Node3.transaction();
 
-    const regionsForNode2 = ['National Capital Region (NCR)', 'Cordillera Administrative Region (CAR)', 'Ilocos Region (I)', 'Cagayan Valley (II)', 'Central Luzon (III)', 'CALABARZON (IV-A)', 'MIMAROPA (IV-B)', 'Bicol Region (V)'];
-    const regionsForNode3 = ['Western Visayas (VI)', 'Central Visayas (VII)', 'Eastern Visayas (VIII)', 'Zamboanga Peninsula (IX)', 'Northern Mindanao (X)', 'Davao Region (XI)', 'SOCCSKSARGEN (Cotabato Region) (XII)', 'Caraga (XIII)', 'Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)'];
-
-
     try {
-        const insertNode1Appointment = await Node1Appointments.create({
+        const insertNode1 = await Node1Appointments.create({
             pxid: pxid,
             clinicid: clinicid,
             doctorid: doctorid,
@@ -105,12 +65,11 @@ router.post('/submit', async(req, res) => {
         }, { transaction: node1 },{
             fields: ['pxid', 'clinicid', 'doctorid', 'apptid', 'status', 'TimeQueued', 'QueueDate', 'StartTime', 'EndTime', 'type', 'isVirtual', 'hospitalname', 'City', 'Province', 'RegionName', 'gender', 'age', 'mainspecialty']
         });
-        //await node1.commit();
-        console.log('Successfully inserted appointment into central node ', insertNode1Appointment);
+        console.log('Successful', insertNode1);
 
 
         if(regionsForNode2.includes(req.body.RegionName)){
-            const insertNode2Appointment = await Node2Appointments.create({
+            const insertNode2 = await Node2Appointments.create({
                 pxid: pxid,
                 clinicid: clinicid,
                 doctorid: doctorid,
@@ -134,10 +93,10 @@ router.post('/submit', async(req, res) => {
             });
             await node2.commit();
             await node3.commit();
-            console.log('Successfully inserted appointment into luzon node ', insertNode2Appointment);
+            console.log('Successful', insertNode2);
         }
         if(regionsForNode3.includes(req.body.RegionName)){
-            const insertNode3Appointment = await Node3Appointments.create({
+            const insertNode3 = await Node3Appointments.create({
                 pxid: pxid,
                 clinicid: clinicid,
                 doctorid: doctorid,
@@ -161,7 +120,7 @@ router.post('/submit', async(req, res) => {
             });
             await node3.commit();
             await node2.commit();
-            console.log('Successfully inserted appointment into vismin node', insertNode3Appointment);
+            console.log('Successful', insertNode3);
         }
 
         await node1.commit();
@@ -170,21 +129,138 @@ router.post('/submit', async(req, res) => {
 
         res.sendStatus(200);
     } catch(err) {
-        /*
-        await node1.rollback();
-        await node2.rollback();
-        await node3.rollback();
-        console.log('Error inserting appointment: ', err);
-        res.sendStatus(400);
-        */
         if (node1) await node1.rollback();
         if (regionsForNode2.includes(RegionName) && node2) await node2.rollback();
         if (regionsForNode3.includes(RegionName) && node3) await node3.rollback();
 
-        console.log('Error inserting appointment: ', err);
+        console.log('Error inserting:', err);
         res.sendStatus(400);
     }
 });
 
+router.post('/updateform', async(req, res) => {
+    Object.keys(req.body).forEach(key => {
+        req.body[key] = req.body[key] === '' ? null : req.body[key];
+    });
+
+    const { apptidSearch } = req.body;
+    
+    if (!apptidSearch) {
+        return res.status(400).send("Apptid to update appointment is missing or invalid.");
+    }
+
+    const { pxid, clinicid, doctorid, apptid, status, TimeQueued, QueueDate, StartTime, EndTime, type, isVirtual, hospitalname,
+        City, Province, RegionName, gender, age, mainspecialty } = req.body;
+
+    const regionsForNode2 = ['National Capital Region (NCR)', 'Cordillera Administrative Region (CAR)', 'Ilocos Region (I)', 'Cagayan Valley (II)', 'Central Luzon (III)', 'CALABARZON (IV-A)', 'MIMAROPA (IV-B)', 'Bicol Region (V)'];
+    const regionsForNode3 = ['Western Visayas (VI)', 'Central Visayas (VII)', 'Eastern Visayas (VIII)', 'Zamboanga Peninsula (IX)', 'Northern Mindanao (X)', 'Davao Region (XI)', 'SOCCSKSARGEN (Cotabato Region) (XII)', 'Caraga (XIII)', 'Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)'];
+
+    const node1 = await Node1.transaction();
+    const node2 = await Node2.transaction();
+    const node3 = await Node3.transaction();
+
+    try {
+        const updateNode1 = await Node1Appointments.update({
+            pxid: pxid,
+            clinicid: clinicid,
+            doctorid: doctorid,
+            apptid: apptid,
+            hospitalname: hospitalname,
+            mainspecialty: mainspecialty,
+            RegionName: RegionName,
+            status: status,
+            TimeQueued: TimeQueued,
+            QueueDate: QueueDate,
+            StartTime: StartTime,
+            EndTime: EndTime,
+            type: type,
+            isVirtual: isVirtual,
+            City: City,
+            Province: Province,
+            gender: gender,
+            age: age
+        }, { where: {apptid: apptidSearch},}, 
+            { transaction: node1 },
+            { fields: ['pxid', 'clinicid', 'doctorid', 'apptid', 'status', 'TimeQueued', 'QueueDate', 'StartTime', 'EndTime', 'type', 'isVirtual', 'hospitalname', 'City', 'Province', 'RegionName', 'gender', 'age', 'mainspecialty']
+        });
+        await node1.commit();
+        console.log('Successful', updateNode1);
+        
+        if(regionsForNode2.includes(req.body.RegionName)){
+            const updateNode2 = await Node2Appointments.update({
+                pxid: pxid,
+                clinicid: clinicid,
+                doctorid: doctorid,
+                apptid: apptid,
+                hospitalname: hospitalname,
+                mainspecialty: mainspecialty,
+                RegionName: RegionName,
+                status: status,
+                TimeQueued: TimeQueued,
+                QueueDate: QueueDate,
+                StartTime: StartTime,
+                EndTime: EndTime,
+                type: type,
+                isVirtual: isVirtual,
+                City: City,
+                Province: Province,
+                gender: gender,
+                age: age
+            }, {
+                where: {
+                    apptid: apptidSearch
+                }},
+                { transaction: node1 },
+                { fields: ['pxid', 'clinicid', 'doctorid', 'apptid', 'status', 'TimeQueued', 'QueueDate', 'StartTime', 'EndTime', 'type', 'isVirtual', 'hospitalname', 'City', 'Province', 'RegionName', 'gender', 'age', 'mainspecialty']
+        });
+            await node2.commit();
+            await node3.commit();
+            console.log('Successful', updateNode2);
+        }
+        if(regionsForNode3.includes(req.body.RegionName)){
+            const updateNode3 = await Node3Appointments.update({
+                pxid: pxid,
+                clinicid: clinicid,
+                doctorid: doctorid,
+                apptid: apptid,
+                hospitalname: hospitalname,
+                mainspecialty: mainspecialty,
+                RegionName: RegionName,
+                status: status,
+                TimeQueued: TimeQueued,
+                QueueDate: QueueDate,
+                StartTime: StartTime,
+                EndTime: EndTime,
+                type: type,
+                isVirtual: isVirtual,
+                City: City,
+                Province: Province,
+                gender: gender,
+                age: age
+            }, {
+                where: {
+                    apptid: apptidSearch
+                }},
+                { transaction: node3 },
+                {fields: ['pxid', 'clinicid', 'doctorid', 'apptid', 'status', 'TimeQueued', 'QueueDate', 'StartTime', 'EndTime', 'type', 'isVirtual', 'hospitalname', 'City', 'Province', 'RegionName', 'gender', 'age', 'mainspecialty']
+            });
+            await node2.commit();
+            await node3.commit();
+            console.log('Successful', updateNode3);
+        }
+        await node1.commit();
+        if (regionsForNode2.includes(RegionName)) await node2.commit();
+        if (regionsForNode3.includes(RegionName)) await node3.commit();
+
+        res.sendStatus(200);
+    } catch(err) {
+        if (node1) await node1.rollback();
+        if (regionsForNode2.includes(RegionName) && node2) await node2.rollback();
+        if (regionsForNode3.includes(RegionName) && node3) await node3.rollback();
+
+        console.log('Error updating appointment: ', err);
+        res.sendStatus(400);
+    }
+});
 
 export default router;
